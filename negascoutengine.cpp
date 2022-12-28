@@ -181,6 +181,40 @@ int eval_board(int Board[20][20], int pieceType, bounds const& restrictions) {
 }
 
 vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
+    array<int, 9> a, b, c, d;
+    int a_i = 0, b_i = 0, c_i = 0, d_i = 0;
+    
+    for(int i = x - 4; i <= x + 4; i++){
+        if(i < 0 or i >= 20)
+            a[a_i++] = 2;
+        else
+            a[a_i++] = Board[i][y];
+    }
+    
+    for(int j = y - 4; j <= y + 4; j++){
+        if(j < 0 or j >= 20)
+            b[b_i++] = 2;
+        else
+            b[b_i++] = Board[x][j];
+    }
+    for(int i = x-4, j = y-4; i <= x + 4 and j <= y + 4; i++, j++){
+        if(i < 0 or i >= 20 or j < 0 or j >= 20)
+            c[c_i++] = 2;
+        else
+            c[c_i++] = Board[i][j];
+    }
+    for(int i = x-4, j = y+4; i <= x + 4 and j >= y - 4; i++, j--){
+        if(i < 0 or i >= 4 or j < 0 or j >= 4)
+            d[d_i++] = 2;
+        else
+            d[d_i++] = Board[i][j];
+    }
+    
+    vector<array<int, 9>> Directions = {a,b,c,d};
+    return Directions;
+}
+
+vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
     array<int, 9> a;
     array<int, 9> b;
     array<int, 9> c;
