@@ -15,5 +15,5 @@ struct Move {
     }
 };
 
-Move engine(int Board[15][15], int player, int time);
+Move engine(int Board[20][20], int player, int time);
 #endif
