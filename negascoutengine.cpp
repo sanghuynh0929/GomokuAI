@@ -1,10 +1,3 @@
-//
-//  negascoutengine.cpp
-//  negascoutAI
-//
-//  Created by Sáng Huỳnh on 26/12/2022.
-//
-
 #include "negascoutengine.hpp"
 
 // negascout_depth_limited.cpp : Defines the entry point for the application.
@@ -70,7 +63,7 @@ int evaluateblock(int blocks, int pieces) {
     }
 }
 
-int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
+int eval_board(int Board[20][20], int pieceType, bounds const& restrictions) {
     int score = 0;
     int mnr = restrictions[0];
     int mnc = restrictions[1];
@@ -86,11 +79,12 @@ int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
                     block++;
                 }
                 // pieceNum
-                for (column++; column < 15 and Board[row][column] == pieceType; column++) {
+                column++;
+                for (; column < 20 and Board[row][column] == pieceType; column++) {
                     piece++;
                 }
                 // right
-                if (column == 15 or Board[row][column] != 0) {
+                if (column == 20 or Board[row][column] != 0) {
                     block++;
                 }
                 score = score + evaluateblock(block, piece);
@@ -108,11 +102,12 @@ int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
                     block++;
                 }
                 // pieceNum
-                for (row++; row < 15 and Board[row][column] == pieceType; row++) {
+                row++;
+                for (; row < 20 and Board[row][column] == pieceType; row++) {
                     piece++;
                 }
                 // right
-                if (row == 15 or Board[row][column] != 0) {
+                if (row == 20 or Board[row][column] != 0) {
                     block++;
                 }
                 score += evaluateblock(block, piece);
@@ -129,7 +124,7 @@ int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
                     int block = 0;
                     int piece = 1;
                     // left
-                    if (c == 0 or r == 15 - 1 or Board[r + 1][c - 1] != 0) {
+                    if (c == 0 or r == 20 - 1 or Board[r + 1][c - 1] != 0) {
                         block++;
                     }
                     // pieceNum
@@ -140,7 +135,7 @@ int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
                         c++;
                     }
                     // right
-                    if (r < 0 or c == 15 or Board[r][c] != 0) {
+                    if (r < 0 or c == 20 or Board[r][c] != 0) {
                         block++;
                     }
                     score += evaluateblock(block, piece);
@@ -157,7 +152,7 @@ int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
         while (r <= mxr and c <= mxc) {
             if (r >= mnr and r <= mxr) {
                 if (Board[r][c] == pieceType) {
-                    int  block = 0;
+                    int block = 0;
                     int piece = 1;
                     // left
                     if (c == 0 or r == 0 or Board[r - 1][c - 1] != 0) {
@@ -166,12 +161,12 @@ int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
                     // pieceNum
                     r++;
                     c++;
-                    for (; r < 15 and Board[r][c] == pieceType; r++) {
+                    for (; r < 20 and Board[r][c] == pieceType; r++) {
                         piece++;
                         c++;
                     }
                     // right
-                    if (r == 15 or c == 15 or Board[r][c] != 0) {
+                    if (r == 20 or c == 20 or Board[r][c] != 0) {
                         block++;
                     }
                     score += evaluateblock(block, piece);
@@ -185,7 +180,7 @@ int eval_board(int Board[15][15], int pieceType, bounds const& restrictions) {
     return score;
 }
 
-vector<array<int, 9>> get_directions(int Board[15][15], int x, int y) {
+vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
     array<int, 9> a;
     array<int, 9> b;
     array<int, 9> c;
@@ -196,18 +191,18 @@ vector<array<int, 9>> get_directions(int Board[15][15], int x, int y) {
     int d_i = 0;
 
     for (int i = -4; i < 5; i++) {
-        if (x + i >= 0 and x + i <= 15 - 1) {
+        if (x + i >= 0 and x + i <= 20 - 1) {
             a[a_i] = Board[x + i][y];
             a_i++;
-            if (y + i >= 0 and y + i <= 15 - 1) {
+            if (y + i >= 0 and y + i <= 20 - 1) {
                 b[b_i] = Board[x + i][y + i];
                 b_i++;
             }
         }
-        if (y + i >= 0 and y + i <= 15 - 1) {
+        if (y + i >= 0 and y + i <= 20 - 1) {
             c[c_i] = Board[x][y + i];
             c_i++;
-            if (x - i >= 0 and x - i <= 15 - 1) {
+            if (x - i >= 0 and x - i <= 20 - 1) {
                 d[d_i] = Board[x - i][y + i];
                 d_i++;
             }
@@ -247,7 +242,7 @@ bool check_directions(const array<int, 9> & arr) {
     return false;
 }
 
-bool check_win(int Board[15][15], int x, int y) {
+bool check_win(int Board[20][20], int x, int y) {
     vector<array<int, 9>> Directions = get_directions(Board, x, y);
     for (auto &dir : Directions) {
         if (check_directions(dir)) {
@@ -258,11 +253,11 @@ bool check_win(int Board[15][15], int x, int y) {
 }
 
 
-bool local_cell(int Board[15][15], int r, int c) {
+bool local_cell(int Board[20][20], int r, int c) {
     for (int i = r - 2; i <= r + 2; i++) {
-        if (i < 0 or i >= 15) continue;
+        if (i < 0 or i >= 20) continue;
         for (int j = c - 2; j <= c + 2; j++) {
-            if (j < 0 or j >= 15) continue;
+            if (j < 0 or j >= 20) continue;
             if (Board[i][j] != 0)
                 return true;
         }
@@ -270,13 +265,13 @@ bool local_cell(int Board[15][15], int r, int c) {
     return false;
 }
 
-bounds get_bounds(int Board[15][15]) {
-    int mnr = 15;
-    int mnc = 15;
+bounds get_bounds(int Board[20][20]) {
+    int mnr = 20;
+    int mnc = 20;
     int mxr = -1;
     int mxc = -1;
-    for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 15; j++) {
+    for (int i = 0; i < 20; i++) {
+        for (int j = 0; j < 20; j++) {
             if (Board[i][j] != 0) {
                 mnr = min(mnr, i);
                 mnc = min(mnc, j);
@@ -287,8 +282,8 @@ bounds get_bounds(int Board[15][15]) {
     }
     mnr = max(mnr, 2);
     mnc = max(mnc, 2);
-    mxr = min(mxr, 12);
-    mxc = min(mxc, 12);
+    mxr = min(mxr, 17);
+    mxc = min(mxc, 17);
     return bounds{mnr, mnc, mxr, mxc};
 }
 
@@ -303,8 +298,8 @@ bounds update_restrictions(bounds const& restrictions, int i, int j) {
     mxc = max(mxc, j);
     mnr = max(mnr, 2);
     mnc = max(mnc, 2);
-    mxr = min(mxr, 12);
-    mxc = min(mxc, 12);
+    mxr = min(mxr, 17);
+    mxc = min(mxc, 17);
     bounds updated = {mnr, mnc, mxr, mxc};
     return updated;
 }
@@ -351,7 +346,7 @@ int evalff(int seq)
     }
 }
 
-int evaluate_state(int Board[15][15], int player, int hash, bounds const& restrictions) {
+int evaluate_state(int Board[20][20], int player, int hash, bounds const& restrictions) {
     int black_score = eval_board(Board, -1, restrictions);
     int white_score = eval_board(Board, 1, restrictions);
     int score = 0;
@@ -395,7 +390,7 @@ int evaluate_direction(array<int, 9> const& direction_arr, int player) {
 }
 
 
-int evalute_move(int Board[15][15], int x, int y, int player) {
+int evalute_move(int Board[20][20], int x, int y, int player) {
     int score = 0;
     vector<array<int, 9>> Directions = get_directions(Board, x, y);
     int temp_score;
@@ -415,9 +410,9 @@ bool move_sorter(Move const& move1, Move const& move2) {
     return move1.score > move2.score;
 }
 
-vector<Move> BoardGenerator(bounds const& restrictions, int Board[15][15], int player)
+vector<Move> BoardGenerator(bounds const& restrictions, int Board[20][20], int player)
 {
-    vector<Move> candidate_moves; //c is j  r is i;
+    vector<Move> candidate_moves; 
     int mnr = restrictions[0];
     int mnc = restrictions[1];
     int mxr = restrictions[2];
@@ -439,28 +434,28 @@ vector<Move> BoardGenerator(bounds const& restrictions, int Board[15][15], int p
     }
 
     sort(candidate_moves.begin(), candidate_moves.end(), move_sorter);
-    //  return availSpots_score.slice(0,20)
+    //  return availSpots_score.slice(0,20) // testing Beam Search
     return candidate_moves;
 }
-int Table[15][15][2];
+int Table[20][20][2];
 
 mt19937 mt_rand((unsigned) time(nullptr));
 
 void Table_init()
 {
-    for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 15; j++) {
+    for (int i = 0; i < 20; i++) {
+        for (int j = 0; j < 20; j++) {
             Table[i][j][0] = mt_rand(); //1
             Table[i][j][1] = mt_rand(); //2
         }
     }
 }
 
-int get_hash(int board[15][15])
+int get_hash(int board[20][20])
 {
     int h = 0;
-    for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 15; j++) {
+    for (int i = 0; i < 20; i++) {
+        for (int j = 0; j < 20; j++) {
             int Board_value = board[i][j];
             if (Board_value != 0) {
                 if (Board_value == -1)
@@ -481,6 +476,7 @@ int update_hash(int hash, int player, int i, int j)
         hash ^= Table[i][j][1];
     return hash;
 }
+
 TimePoint start;
 int tlimit = 0;
 bool timeout(){
@@ -492,7 +488,7 @@ bool timeout(){
         return false;
 }
 
-int negascout(int Board[15][15], int player, int depth, int alpha, int beta, int hash, const bounds& restrictions, int last_i, int last_j)
+int negascout(int Board[20][20], int player, int depth, int alpha, int beta, int hash, const bounds& restrictions, int last_i, int last_j)
 {
     if(timeout()) {
         return 1;
@@ -570,7 +566,7 @@ int negascout(int Board[15][15], int player, int depth, int alpha, int beta, int
     return score;
 }
 
-Move engine(int Board[15][15], int player, int time)
+Move engine(int Board[20][20], int player, int time)
 {
     Table_init();
     tlimit = time * 1000;
