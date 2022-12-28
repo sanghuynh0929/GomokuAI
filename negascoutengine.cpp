@@ -39,8 +39,8 @@ typedef array<int,4> bounds;
 const int INF = (int) 1e9;
 
 const int WIN_DETECTED = numeric_limits<int>::min() + 1;
-const int LIVE = {0, 10, 100, 1000, 10000, 100000};
-const int DEAD = {0, 1, 10, 100, 1000, 100000};
+const int LIVE[] = {0, 10, 100, 1000, 10000, 100000};
+const int DEAD[] = {0, 1, 10, 100, 1000, 100000};
 
 int evaluateblock(int blocks, int pieces) {
     if (blocks == 0) {
@@ -213,53 +213,6 @@ vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
     vector<array<int, 9>> Directions = {a,b,c,d};
     return Directions;
 }
-
-vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
-    array<int, 9> a;
-    array<int, 9> b;
-    array<int, 9> c;
-    array<int, 9> d;
-    int a_i = 0;
-    int b_i = 0;
-    int c_i = 0;
-    int d_i = 0;
-
-    for (int i = -4; i < 5; i++) {
-        if (x + i >= 0 and x + i <= 20 - 1) {
-            a[a_i] = Board[x + i][y];
-            a_i++;
-            if (y + i >= 0 and y + i <= 20 - 1) {
-                b[b_i] = Board[x + i][y + i];
-                b_i++;
-            }
-        }
-        if (y + i >= 0 and y + i <= 20 - 1) {
-            c[c_i] = Board[x][y + i];
-            c_i++;
-            if (x - i >= 0 and x - i <= 20 - 1) {
-                d[d_i] = Board[x - i][y + i];
-                d_i++;
-            }
-        }
-
-    }
-    if (a_i != 9) {
-        a[a_i] = 2;
-    }
-    if (b_i != 9) {
-        b[b_i] = 2;
-    }
-    if (c_i != 9) {
-        c[c_i] = 2;
-    }
-    if (d_i != 9) {
-        d[d_i] = 2;
-    }
-
-    vector<array<int, 9>> Directions = {a,b,c,d};
-    return Directions;
-}
-
 
 bool check_directions(const array<int, 9> & arr) {
     int size = 9;
