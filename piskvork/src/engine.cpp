@@ -334,7 +334,7 @@ int evaluate_direction(array<int, 9> const& direction_arr, int player) {
 }
 
 
-int evalute_move(int Board[20][20], int x, int y, int player) {
+int evaluate_move(int Board[20][20], int x, int y, int player) {
     int score = 0;
     vector<array<int, 9>> Directions = get_directions(Board, x, y);
     int temp_score;
@@ -381,7 +381,7 @@ vector<Move> BoardGenerator(bounds const& restrictions, int Board[20][20], int p
                 }
                 Board[i][j] = 0;
                 
-                move.score = evalute_move(Board, i, j, player);
+                move.score = evaluate_move(Board, i, j, player);
                 if (move.score == WIN) {
                     vector<Move> winning_move(1,move);
                     return winning_move;
