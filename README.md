@@ -33,6 +33,6 @@ Run the following command in the Command Prompt to check if installation was don
 
 $ g++ --version
 
-The AI is an executable command line program, and is implemented according to the Piskvork new protocol. You have to run the executables first and trust the file if prompted. 
+The AI is an executable command line program, and is implemented according to the Piskvork new protocol, more on that https://plastovicka.github.io/protocl2en.htm. You have to run the executables first and trust the file if prompted. 
 
 Then, run piskvork.exe, go to the Settings option in the Players tab and specify the path to the AI executable.
