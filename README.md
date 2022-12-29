@@ -24,6 +24,8 @@ Run the AI from Finder or from terminal using
 
 $ ./AI
 
+You could compile the AI similarly on a Unix-based operating system.
+
 # On a Windows machine:
 
 You will need a C++ compiler to run the AI. You could download MinGW via https://sourceforge.net/projects/mingw/
