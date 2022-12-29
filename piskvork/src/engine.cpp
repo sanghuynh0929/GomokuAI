@@ -22,12 +22,11 @@ int maxdepth = 0;
 Move tempbest;
 
 const int INF = (int) 1e9;
-
-const int WIN_DETECTED = -INF;
+const int WIN = -INF - 10;
 const int LIVE[] = {0, 10, 100, 1000, 10000, 100000};
 const int DEAD[] = {0, 1, 10, 100, 1000, 100000};
 
-int evaluateblock(int blocks, int pieces) {
+int evaluate_block(int blocks, int pieces) {
     if (blocks == 0) {
         if(pieces <= 5)
             return LIVE[pieces];
@@ -48,7 +47,7 @@ int evaluateblock(int blocks, int pieces) {
     }
 }
 
-int eval_board(int Board[20][20], int pieceType, bounds const& restrictions) {
+int evaluate_board(int Board[20][20], int pieceType, bounds const& restrictions) {
     int score = 0;
     int mnr = restrictions[0];
     int mnc = restrictions[1];
@@ -72,7 +71,7 @@ int eval_board(int Board[20][20], int pieceType, bounds const& restrictions) {
                 if (column == 20 or Board[row][column] != 0) {
                     block++;
                 }
-                score = score + evaluateblock(block, piece);
+                score = score + evaluate_block(block, piece);
             }
         }
     }
@@ -95,7 +94,7 @@ int eval_board(int Board[20][20], int pieceType, bounds const& restrictions) {
                 if (row == 20 or Board[row][column] != 0) {
                     block++;
                 }
-                score += evaluateblock(block, piece);
+                score += evaluate_block(block, piece);
             }
         }
     }
@@ -123,7 +122,7 @@ int eval_board(int Board[20][20], int pieceType, bounds const& restrictions) {
                     if (r < 0 or c == 20 or Board[r][c] != 0) {
                         block++;
                     }
-                    score += evaluateblock(block, piece);
+                    score += evaluate_block(block, piece);
                 }
             }
             r -= 1;
@@ -154,7 +153,7 @@ int eval_board(int Board[20][20], int pieceType, bounds const& restrictions) {
                     if (r == 20 or c == 20 or Board[r][c] != 0) {
                         block++;
                     }
-                    score += evaluateblock(block, piece);
+                    score += evaluate_block(block, piece);
                 }
             }
             r += 1;
@@ -276,51 +275,24 @@ bounds update_restrictions(bounds const& restrictions, int i, int j) {
     return updated;
 }
 
-int get_seq(int y, int e) {
-    if (y + e == 0) {
-        return 0;
-    }
-    if (y != 0 and e == 0) {
-        return y;
-    }
-    if (y == 0 and e != 0) {
-        return -e;
-    }
-    if (y != 0 and e != 0) {
-        return 17;
-    }
-    return 17;
-}
+const int YBLOCK[] = {0,40,800,15000,800000};
+const int EBLOCK[] = {0,20,400,1800,100000};
 
-int evalff(int seq)
+int evaluate_config(int you, int enemy)
 {
-    switch (seq) {
-        case 0:
-            return 7;
-        case 1:
-            return 35;
-        case 2:
-            return 800;
-        case 3:
-            return 15000;
-        case 4:
-            return 800000;
-        case -1:
-            return 15;
-        case -2:
-            return 400;
-        case -3:
-            return 1800;
-        case -4:
-            return 100000;
-        default:
-            return 0;
-    }
+    if(you != 0 and enemy != 0)
+        return 0; // block with 2 colors yield no points
+    if(you == 0 and enemy == 0)
+        return 10;
+    if(you != 0)
+        return YBLOCK[you];
+    if(enemy != 0)
+        return EBLOCK[enemy];
 }
 
 int evaluate_state(int Board[20][20], int player, int hash, bounds const& restrictions) {
-    int black_score = eval_board(Board, -1, restrictions);
-    int white_score = eval_board(Board, 1, restrictions);
+    int black_score = evaluate_board(Board, -1, restrictions);
+    int white_score = evaluate_board(Board, 1, restrictions);
     int score = 0;
     if (player == -1) {
         score = (black_score - white_score);
@@ -353,9 +325,9 @@ int evaluate_direction(array<int, 9> const& direction_arr, int player) {
                 enemy++;
             }
         }
-        score += evalff(get_seq(you, enemy));
-        if ((score >= 800000)) {
-            return WIN_DETECTED;
+        score += evaluate_config(you, enemy);
+        if (score >= 800000) {
+            return WIN;
         }
     }
     return score;
@@ -368,8 +340,8 @@ int evalute_move(int Board[20][20], int x, int y, int player) {
     int temp_score;
     for (auto &dir : Directions) {
         temp_score = evaluate_direction(dir, player);
-        if (temp_score == WIN_DETECTED) {
-            return WIN_DETECTED;
+        if (temp_score == WIN) {
+            return WIN;
         }
         else {
             score += temp_score;
@@ -410,7 +382,7 @@ vector<Move> BoardGenerator(bounds const& restrictions, int Board[20][20], int p
                 Board[i][j] = 0;
                 
                 move.score = evalute_move(Board, i, j, player);
-                if (move.score == WIN_DETECTED) {
+                if (move.score == WIN) {
                     vector<Move> winning_move(1,move);
                     return winning_move;
                 }
