@@ -181,36 +181,32 @@ int evaluate_board(int Board[20][20], int pieceType, bounds const& restrictions)
 
 vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
     array<int, 9> a, b, c, d;
-    int a_i = 0, b_i = 0, c_i = 0, d_i = 0;
-    
-    for(int i = x - 4; i <= x + 4; i++){
-        if(i < 0 or i >= 20)
-            a[a_i++] = 2;
-        else
-            a[a_i++] = Board[i][y];
+    int j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(x + i >= 0 and x + i < 20)
+            a[j++] = Board[x+i][y];
     }
-    
-    for(int j = y - 4; j <= y + 4; j++){
-        if(j < 0 or j >= 20)
-            b[b_i++] = 2;
-        else
-            b[b_i++] = Board[x][j];
+    if (j != 9) a[j] = 2; // mark the end of array
+    j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(y + i >= 0 and y + i < 20)
+            b[j++] = Board[x][y+i];
     }
-    for(int i = x-4, j = y-4; i <= x + 4 and j <= y + 4; i++, j++){
-        if(i < 0 or i >= 20 or j < 0 or j >= 20)
-            c[c_i++] = 2;
-        else
-            c[c_i++] = Board[i][j];
+    if(j != 9) b[j] = 2;
+    j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(x + i >= 0 and y + i >= 0 and x + i < 20 and y + i < 20)
+            c[j++] = Board[x-i][y+i];
     }
-    for(int i = x-4, j = y+4; i <= x + 4 and j >= y - 4; i++, j--){
-        if(i < 0 or i >= 4 or j < 0 or j >= 4)
-            d[d_i++] = 2;
-        else
-            d[d_i++] = Board[i][j];
+    if(j != 9) c[j] = 2;
+    j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(x - i >= 0 and y + i >= 0 and x - i < 20 and y + i < 20)
+            d[j++] = Board[x-i][y+i];
     }
-    
-    vector<array<int, 9>> Directions = {a,b,c,d};
-    return Directions;
+    if(j != 9) d[j] = 2;
+    vector<array<int, 9>> dirs = {a,b,c,d};
+    return dirs;
 }
 
 bool check_directions(const array<int, 9> & arr) {
@@ -218,7 +214,7 @@ bool check_directions(const array<int, 9> & arr) {
     for (int i = 0; i < size - 4; i++) {
         if (arr[i] != 0) {
             if (arr[i] == 2 or arr[i + 1] == 2 or arr[i + 2] == 2 or arr[i + 3] == 2 or arr[i + 4] == 2) {
-                return false;
+                return false; // out of range
             }
             if (arr[i] == arr[i + 1] and arr[i] == arr[i + 2] and arr[i] == arr[i + 3] and arr[i] == arr[i + 4]) {
                 return true;
@@ -323,43 +319,31 @@ int evaluate_state(int Board[20][20], int player, int hash, bounds const& restri
 
 
 int evaluate_direction(const array<int, 9> & dir, int player) {
-    // evaluate the following blocks
-    // dir: -4 -3 -2 -1 0 1 2 3 4
-    // blocks:
-    // (-4, -3, -2, -1, 0)
-    // (-3, -2, -1,  0, 1)
-    // (-2, -1,  0,  1, 2)
-    // (-1,  0,  1,  2, 3)
-    // ( 0,  1,  2,  3, 4)
     int score = 0;
-    int i = 0;
-    while(dir[i] == 2) i++;
-    for (; i + 4 < 9; i++) {
-        int you = 0;
-        int enemy = 0;
+    for (int i = 0; i < 5; i++) {
+        int y = 0, e = 0;
         if (dir[i] == 2) {
             return score;
         }
         for (int j = 0; j <= 4; j++) {
             if (dir[i + j] == 2) {
-                if (score >= 800000)
-                    return FORCING;
                 return score;
             }
-            else if (dir[i + j] == player) {
-                you++;
+            if (dir[i + j] == player) {
+                y++;
             }
             else if (dir[i + j] == -player) {
-                enemy++;
+                e++;
             }
         }
-        score += evaluate_config(you, enemy);
+        score += evaluate_block(y,e);
         if (score >= 800000) {
             return FORCING;
         }
     }
     return score;
 }
+
 
 
 int evaluate_move(int Board[20][20], int x, int y, int player) {
