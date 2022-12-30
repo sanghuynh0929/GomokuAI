@@ -1,5 +1,3 @@
-// negascout_depth_limited.cpp : Defines the entry point for the application.
-
 #include <iostream>
 #include <vector>
 #include <array>
@@ -23,8 +21,8 @@ Move tempbest;
 
 const int INF = (int) 1e9;
 const int FORCING = -INF - 10;
-const int LIVE[] = {0, 10, 100, 1000, 10000, 100000};
-const int DEAD[] = {0, 1, 10, 100, 1000, 100000};
+const int LIVE[] = {0, 10, 1000, 10000, 70000, 100000};
+const int DEAD[] = {0, 1, 10, 1000, 12000, 100000};
 
 int evaluate_block(int blocks, int pieces) {
     if (blocks == 0) {
@@ -166,36 +164,32 @@ int evaluate_board(int Board[20][20], int pieceType, bounds const& restrictions)
 
 vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
     array<int, 9> a, b, c, d;
-    int a_i = 0, b_i = 0, c_i = 0, d_i = 0;
-    
-    for(int i = x - 4; i <= x + 4; i++){
-        if(i < 0 or i >= 20)
-            a[a_i++] = 2;
-        else
-            a[a_i++] = Board[i][y];
+    int j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(x + i >= 0 and x + i < 20)
+            a[j++] = Board[x+i][y];
     }
-    
-    for(int j = y - 4; j <= y + 4; j++){
-        if(j < 0 or j >= 20)
-            b[b_i++] = 2;
-        else
-            b[b_i++] = Board[x][j];
+    if (j != 9) a[j] = 2;
+    j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(y + i >= 0 and y + i < 20)
+            b[j++] = Board[x][y+i];
     }
-    for(int i = x-4, j = y-4; i <= x + 4 and j <= y + 4; i++, j++){
-        if(i < 0 or i >= 20 or j < 0 or j >= 20)
-            c[c_i++] = 2;
-        else
-            c[c_i++] = Board[i][j];
+    if(j != 9) b[j] = 2;
+    j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(x + i >= 0 and y + i >= 0 and x + i < 20 and y + i < 20)
+            c[j++] = Board[x-i][y+i];
     }
-    for(int i = x-4, j = y+4; i <= x + 4 and j >= y - 4; i++, j--){
-        if(i < 0 or i >= 4 or j < 0 or j >= 4)
-            d[d_i++] = 2;
-        else
-            d[d_i++] = Board[i][j];
+    if(j != 9) c[j] = 2;
+    j = 0;
+    for (int i = -4; i <= 4; i++){
+        if(x - i >= 0 and y + i >= 0 and x - i < 20 and y + i < 20)
+            d[j++] = Board[x-i][y+i];
     }
-    
-    vector<array<int, 9>> Directions = {a,b,c,d};
-    return Directions;
+    if(j != 9) d[j] = 2;
+    vector<array<int, 9>> dirs = {a,b,c,d};
+    return dirs;
 }
 
 bool check_directions(const array<int, 9> & arr) {
@@ -275,15 +269,15 @@ bounds update_restrictions(bounds const& restrictions, int i, int j) {
     return updated;
 }
 
-const int YBLOCK[] = {0,40,800,20000,800000};
-const int EBLOCK[] = {0,20,1000,100000,800000};
+const int YBLOCK[] = {7,35,800,15000,800000};
+const int EBLOCK[] = {7,15,400,2300,100000};
 
 int evaluate_config(int you, int enemy)
 {
     if(you != 0 and enemy != 0)
         return 0; // block with 2 colors yield no points
     if(you == 0 and enemy == 0)
-        return 10;
+        return 7;
     if(you != 0)
         return YBLOCK[you];
     if(enemy != 0)
@@ -306,37 +300,24 @@ int evaluate_state(int Board[20][20], int player, int hash, bounds const& restri
 
 
 int evaluate_direction(const array<int, 9> & dir, int player) {
-    // evaluate the following blocks
-    // dir: -4 -3 -2 -1 0 1 2 3 4
-    // blocks:
-    // (-4, -3, -2, -1, 0)
-    // (-3, -2, -1,  0, 1)
-    // (-2, -1,  0,  1, 2)
-    // (-1,  0,  1,  2, 3)
-    // ( 0,  1,  2,  3, 4)
     int score = 0;
-    int i = 0;
-    while(dir[i] == 2) i++;
-    for (; i + 4 < 9; i++) {
-        int you = 0;
-        int enemy = 0;
+    for (int i = 0; i < 5; i++) {
+        int y = 0, e = 0;
         if (dir[i] == 2) {
-            if (score >= 800000)
-                return FORCING;
             return score;
         }
         for (int j = 0; j <= 4; j++) {
             if (dir[i + j] == 2) {
                 return score;
             }
-            else if (dir[i + j] == player) {
-                you++;
+            if (dir[i + j] == player) {
+                y++;
             }
             else if (dir[i + j] == -player) {
-                enemy++;
+                e++;
             }
         }
-        score += evaluate_config(you, enemy);
+        score += evaluate_block(y,e);
         if (score >= 800000) {
             return FORCING;
         }
