@@ -287,8 +287,8 @@ bounds update_restrictions(bounds const& restrictions, int i, int j) {
 }
 
 
-const int YBLOCK[] = {0,40,800,20000,800000};
-const int EBLOCK[] = {0,20,1000,100000,800000};
+const int YBLOCK[] = {7,35,800,15000,800000};
+const int EBLOCK[] = {7,15,400,2300,100000};
 
 int evaluate_config(int you, int enemy)
 {
