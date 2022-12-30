@@ -342,6 +342,8 @@ int evaluate_direction(const array<int, 9> & dir, int player) {
         }
         for (int j = 0; j <= 4; j++) {
             if (dir[i + j] == 2) {
+                if (score >= 800000)
+                    return FORCING;
                 return score;
             }
             else if (dir[i + j] == player) {
