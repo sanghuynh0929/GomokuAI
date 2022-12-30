@@ -1,6 +1,5 @@
 # GomokuAI
-A console Gomoku game application with an AI implemented with Negascout Algorithm.
-
+A console Gomoku game application with an AI implemented with Negascout Algorithm. Based on qwertyforce's implementation in javascript, found here: https://github.com/qwertyforce/gomoku_ai
 Installation Guide
 
 # On a MacOS machine: 
