@@ -22,7 +22,7 @@ int maxdepth = 0;
 Move tempbest;
 
 const int INF = (int) 1e9;
-const int WIN = -INF - 10;
+const int FORCING = -INF - 10;
 const int LIVE[] = {0, 10, 100, 1000, 10000, 100000};
 const int DEAD[] = {0, 1, 10, 100, 1000, 100000};
 
@@ -275,8 +275,8 @@ bounds update_restrictions(bounds const& restrictions, int i, int j) {
     return updated;
 }
 
-const int YBLOCK[] = {0,40,800,15000,800000};
-const int EBLOCK[] = {0,20,400,1800,100000};
+const int YBLOCK[] = {0,40,800,20000,800000};
+const int EBLOCK[] = {0,20,1000,100000,800000};
 
 int evaluate_config(int you, int enemy)
 {
@@ -305,29 +305,38 @@ int evaluate_state(int Board[20][20], int player, int hash, bounds const& restri
 }
 
 
-int evaluate_direction(array<int, 9> const& direction_arr, int player) {
+int evaluate_direction(const array<int, 9> & dir, int player) {
+    // evaluate the following blocks
+    // dir: -4 -3 -2 -1 0 1 2 3 4
+    // blocks:
+    // (-4, -3, -2, -1, 0)
+    // (-3, -2, -1,  0, 1)
+    // (-2, -1,  0,  1, 2)
+    // (-1,  0,  1,  2, 3)
+    // ( 0,  1,  2,  3, 4)
     int score = 0;
-    int arr_size = (int) direction_arr.size();
-    for (int i = 0; (i + 4) < arr_size; i++) {
+    int i = 0;
+    while(dir[i] == 2) i++;
+    for (; i + 4 < 9; i++) {
         int you = 0;
         int enemy = 0;
-        if (direction_arr[i] == 2) {
+        if (dir[i] == 2) {
             return score;
         }
         for (int j = 0; j <= 4; j++) {
-            if (direction_arr[i + j] == 2) {
+            if (dir[i + j] == 2) {
                 return score;
             }
-            if (direction_arr[i + j] == player) {
+            else if (dir[i + j] == player) {
                 you++;
             }
-            else if (direction_arr[i + j] == -player) {
+            else if (dir[i + j] == -player) {
                 enemy++;
             }
         }
         score += evaluate_config(you, enemy);
         if (score >= 800000) {
-            return WIN;
+            return FORCING;
         }
     }
     return score;
@@ -340,8 +349,8 @@ int evaluate_move(int Board[20][20], int x, int y, int player) {
     int temp_score;
     for (auto &dir : Directions) {
         temp_score = evaluate_direction(dir, player);
-        if (temp_score == WIN) {
-            return WIN;
+        if (temp_score == FORCING) {
+            return FORCING;
         }
         else {
             score += temp_score;
@@ -382,7 +391,7 @@ vector<Move> BoardGenerator(bounds const& restrictions, int Board[20][20], int p
                 Board[i][j] = 0;
                 
                 move.score = evaluate_move(Board, i, j, player);
-                if (move.score == WIN) {
+                if (move.score == FORCING) {
                     vector<Move> winning_move(1,move);
                     return winning_move;
                 }
