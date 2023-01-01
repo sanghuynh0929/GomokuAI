@@ -210,10 +210,9 @@ vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
 }
 
 bool check_directions(const array<int, 9> & arr) {
-    int size = 9;
-    for (int i = 0; i < size - 4; i++) {
+    for (int i = 0; i < 5; i++) {
         if (arr[i] != 0) {
-            if (arr[i] == 2 or arr[i + 1] == 2 or arr[i + 2] == 2 or arr[i + 3] == 2 or arr[i + 4] == 2) {
+            if (arr[i + 4] == 2 or arr[i + 3] == 2 or arr[i + 2] == 2 or arr[i + 1] == 2 or arr[i] == 2) {
                 return false; // out of range
             }
             if (arr[i] == arr[i + 1] and arr[i] == arr[i + 2] and arr[i] == arr[i + 3] and arr[i] == arr[i + 4]) {
@@ -262,10 +261,10 @@ bounds get_bounds(int Board[20][20]) {
             }
         }
     }
-    mnr = max(mnr, 2);
-    mnc = max(mnc, 2);
-    mxr = min(mxr, 17);
-    mxc = min(mxc, 17);
+//    mnr = max(mnr, 2);
+//    mnc = max(mnc, 2);
+//    mxr = min(mxr, 17);
+//    mxc = min(mxc, 17);
     return bounds{mnr, mnc, mxr, mxc};
 }
 
@@ -278,24 +277,24 @@ bounds update_restrictions(bounds const& restrictions, int i, int j) {
     mnc = min(mnc, j);
     mxr = max(mxr, i);
     mxc = max(mxc, j);
-    mnr = max(mnr, 2);
-    mnc = max(mnc, 2);
-    mxr = min(mxr, 17);
-    mxc = min(mxc, 17);
+//    mnr = max(mnr, 2);
+//    mnc = max(mnc, 2);
+//    mxr = min(mxr, 17);
+//    mxc = min(mxc, 17);
     bounds updated = {mnr, mnc, mxr, mxc};
     return updated;
 }
 
 
 const int YBLOCK[] = {7,35,800,15000,800000};
-const int EBLOCK[] = {7,15,400,2300,100000};
+const int EBLOCK[] = {7,15,400,20000,100000};
 
 int evaluate_config(int you, int enemy)
 {
     if(you != 0 and enemy != 0)
         return 0; // block with 2 colors yield no points
     if(you == 0 and enemy == 0)
-        return 10;
+        return 7;
     if(you != 0 and you < 5)
         return YBLOCK[you];
     if(enemy != 0 and enemy < 5)
@@ -304,14 +303,14 @@ int evaluate_config(int you, int enemy)
 }
 
 int evaluate_state(int Board[20][20], int player, int hash, bounds const& restrictions) {
-    int black_score = evaluate_board(Board, -1, restrictions);
-    int white_score = evaluate_board(Board, 1, restrictions);
+    int x_score = evaluate_board(Board, 1, restrictions);
+    int o_score = evaluate_board(Board, -1, restrictions);
     int score = 0;
-    if (player == -1) {
-        score = (black_score - white_score);
+    if (player == 1) {
+        score = (x_score - o_score);
     }
     else {
-        score = (white_score - black_score);
+        score = (o_score - x_score);
     }
     ST[hash] = score;
     return score;
@@ -373,8 +372,8 @@ vector<Move> generate_moves(bounds const& restrictions, int Board[20][20], int p
     int mnc = restrictions[1];
     int mxr = restrictions[2];
     int mxc = restrictions[3];
-    for (int i = mnr - 2; i <= mxr + 2; i++) {
-        for (int j = mnc - 2; j <= mxc + 2; j++) {
+    for (int i = max(0,mnr - 2); i <= min(20,mxr + 2); i++) {
+        for (int j = max(0,mnc - 2); j <= min(20,mxc + 2); j++) {
             if (Board[i][j] == 0 and local_cell(Board, i, j)) {
                 Move move;
                 move.i = i;
