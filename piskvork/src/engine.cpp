@@ -51,8 +51,8 @@ int evaluate_board(int Board[20][20], int pieceType, bounds const& restrictions)
     int mnc = restrictions[1];
     int mxr = restrictions[2];
     int mxc = restrictions[3];
-    for (int row = mnr; row < mxr + 1; row++) {
-        for (int column = mnc; column < mxc + 1; column++) {
+    for (int row = mnr; row <= mxr; row++) {
+        for (int column = mnc; column <= mxc; column++) {
             if (Board[row][column] == pieceType) {
                 int block = 0;
                 int piece = 1;
@@ -74,8 +74,8 @@ int evaluate_board(int Board[20][20], int pieceType, bounds const& restrictions)
         }
     }
 
-    for (int column = mnc; column < mxc + 1; column++) {
-        for (int row = mnr; row < mxr + 1; row++) {
+    for (int column = mnc; column <= mxc; column++) {
+        for (int row = mnr; row <= mxr; row++) {
             if (Board[row][column] == pieceType) {
                 int block = 0;
                 int piece = 1;
@@ -97,7 +97,7 @@ int evaluate_board(int Board[20][20], int pieceType, bounds const& restrictions)
         }
     }
 
-    for (int n = mnr; n < (mxc - mnc + mxr); n += 1) {
+    for (int n = mnr; n < (mxc - mnc + mxr); n++) {
         int r = n;
         int c = mnc;
         while (r >= mnr and c <= mxc) {
@@ -245,10 +245,6 @@ bounds get_bounds(int Board[20][20]) {
             }
         }
     }
-    mnr = max(mnr, 2);
-    mnc = max(mnc, 2);
-    mxr = min(mxr, 17);
-    mxc = min(mxc, 17);
     return bounds{mnr, mnc, mxr, mxc};
 }
 
@@ -261,10 +257,6 @@ bounds update_restrictions(bounds const& restrictions, int i, int j) {
     mnc = min(mnc, j);
     mxr = max(mxr, i);
     mxc = max(mxc, j);
-    mnr = max(mnr, 2);
-    mnc = max(mnc, 2);
-    mxr = min(mxr, 17);
-    mxc = min(mxc, 17);
     bounds updated = {mnr, mnc, mxr, mxc};
     return updated;
 }
@@ -353,8 +345,8 @@ vector<Move> BoardGenerator(bounds const& restrictions, int Board[20][20], int p
     int mnc = restrictions[1];
     int mxr = restrictions[2];
     int mxc = restrictions[3];
-    for (int i = mnr - 2; i <= mxr + 2; i++) {
-        for (int j = mnc - 2; j <= mxc + 2; j++) {
+    for (int i = max(0,mnr - 2); i <= min(19,mxr + 2); i++) {
+        for (int j = max(0,mnc - 2); j <= min(19,mxc + 2); j++) {
             if (Board[i][j] == 0 and local_cell(Board, i, j)) {
                 Move move;
                 move.i = i;
