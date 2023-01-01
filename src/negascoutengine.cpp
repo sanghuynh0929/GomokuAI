@@ -372,8 +372,8 @@ vector<Move> generate_moves(bounds const& restrictions, int Board[20][20], int p
     int mnc = restrictions[1];
     int mxr = restrictions[2];
     int mxc = restrictions[3];
-    for (int i = max(0,mnr - 2); i <= min(20,mxr + 2); i++) {
-        for (int j = max(0,mnc - 2); j <= min(20,mxc + 2); j++) {
+    for (int i = max(0,mnr - 2); i <= min(19, mxr + 2); i++) {
+        for (int j = max(0,mnc - 2); j <= min(19, mxc + 2); j++) {
             if (Board[i][j] == 0 and local_cell(Board, i, j)) {
                 Move move;
                 move.i = i;
