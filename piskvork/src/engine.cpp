@@ -169,7 +169,7 @@ vector<array<int, 9>> get_directions(int Board[20][20], int x, int y) {
         if(x + i >= 0 and x + i < 20)
             a[j++] = Board[x+i][y];
     }
-    if (j != 9) a[j] = 2;
+    if (j != 9) a[j] = 2; // mark the end of array
     j = 0;
     for (int i = -4; i <= 4; i++){
         if(y + i >= 0 and y + i < 20)
