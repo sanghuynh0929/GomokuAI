@@ -1,8 +1,8 @@
 # GomokuAI
 A console Gomoku game application with an AI implemented with Negascout Algorithm. Based on qwertyforce's implementation of depth-limited negascout in C++, found here: https://github.com/qwertyforce/gomoku_ai_c
-Installation Guide
+# Installation Guide
 
-# On a MacOS machine: 
+## On a MacOS machine: 
 You will need a C++ compiler to compile and run the AI. We are using the one bundled with the XCode Command Line tools. You could install it with
 
 $ xcode-select -install
@@ -25,7 +25,7 @@ $ ./AI
 
 You could compile the AI similarly on a Unix-based operating system.
 
-# On a Windows machine:
+## On a Windows machine:
 
 You will need a C++ compiler to run the AI. You could download MinGW via https://sourceforge.net/projects/mingw/
 Run the following command in the Command Prompt to check if installation was done properly:
