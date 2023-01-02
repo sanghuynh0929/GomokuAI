@@ -21,7 +21,7 @@ Link those object files to compile a single executable file:
 
 Run the AI from Finder or from terminal using
 
-    ./AI
+    ./hustAI
 
 You could compile the AI similarly on a Unix-based operating system.
 
