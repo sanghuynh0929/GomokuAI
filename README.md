@@ -1,5 +1,5 @@
 # GomokuAI
-A console Gomoku game application with an AI implemented with Negascout Algorithm. Based on qwertyforce's implementation of depth-limited negascout in C++, found here: https://github.com/qwertyforce/gomoku_ai_c
+A console Gomoku game application with an AI implemented with Negascout Algorithm. 
 # Installation Guide
 
 ## On a MacOS machine: 
